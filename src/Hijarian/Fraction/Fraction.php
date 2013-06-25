@@ -19,81 +19,27 @@ class Fraction
     private $denominator;
 
     /**
-     * Simplest possible implementation of adding two rational numbers
+     * We make the Fraction object by providing the textual representation of it,
+     * for example, "2/5" or "11/7".
+     *
+     * Ideally, we'll allow any numerical values (floats, other Fractions)
+     * in both numerator and denominator posisions, normalizing them if needed.
+     *
+     * @param string $value Initial textual representation of the fraction.
      */
-    private static function addFractions(
-        $numerator_x,
-        $denominator_x,
-        $numerator_y,
-        $denominator_y
-    ) {
-        $numerator = $numerator_x * $denominator_y + $numerator_y * $denominator_x;
-        $denominator = $denominator_x * $denominator_y;
-        return array($numerator, $denominator);
-    }
-
-    /**
-     * Simplest possible implementation of adding two rational numbers
-     */
-    private static function multiplyFractions(
-        $numerator_x,
-        $denominator_x,
-        $numerator_y,
-        $denominator_y
-    ) {
-        $numerator = $numerator_x * $numerator_y;
-        $denominator = $denominator_x * $denominator_y;
-        return array($numerator, $denominator);
-    }
-
-    public static function mult($first, $second)
+    public function __construct($value)
     {
-        list($numerator, $denominator) = self::multiplyFractions(
-            $first->numerator,
-            $first->denominator,
-            $second->numerator,
-            $second->denominator
-        );
+        list($numerator, $denominator) = $this->extractFractionParts($value);
 
-        $value = sprintf("%s/%s", $numerator, $denominator);
-        return new self($value);
+        $this->numerator = $numerator;
+        $this->denominator = $denominator;
+
+        $this->renewPrintedRepresentation();
     }
 
-    /**
-     * @param self $first
-     * @param self $second
-     * @return self
-     * @throws \InvalidArgumentException
-     */
-    public static function divide($first, $second)
+    public function isZero()
     {
-        if ($second->isZero())
-            throw new \InvalidArgumentException("Division by zero: {$first} by {$second}!");
-
-        // NOTE that second fraction parts are reversed!
-        list($numerator, $denominator) = self::multiplyFractions(
-            $first->numerator,
-            $first->denominator,
-            $second->denominator,
-            $second->numerator
-        );
-
-        $value = sprintf("%s/%s", $numerator, $denominator);
-        return new self($value);
-    }
-
-    public static function subtract($first, $second)
-    {
-        // NOTE that second fraction parts are reversed!
-        list($numerator, $denominator) = self::addFractions(
-            $first->numerator,
-            $first->denominator,
-            $second->numerator * (-1),
-            $second->denominator
-        );
-
-        $value = sprintf("%s/%s", $numerator, $denominator);
-        return new self($value);
+        return $this->numerator == 0;
     }
 
     /**
@@ -113,22 +59,64 @@ class Fraction
     }
 
     /**
-     * We make the Fraction object by providing the textual representation of it,
-     * for example, "2/5" or "11/7".
+     * Our default textual representation of the Fraction will be it's inner string value.
      *
-     * Ideally, we'll allow any numerical values (floats, other Fractions)
-     * in both numerator and denominator posisions, normalizing them if needed.
-     *
-     * @param string $value Initial textual representation of the fraction.
+     * @return string
      */
-    public function __construct($value)
+    public function __toString()
     {
-        list($numerator, $denominator) = $this->extractFractionParts($value);
+        return $this->string;
+    }
 
-        $this->numerator = $numerator;
-        $this->denominator = $denominator;
 
-        $this->renewPrintedRepresentation();
+    public static function mult($first, $second)
+    {
+        list($numerator, $denominator) = self::doRationalMultiplication(
+            $first->numerator,
+            $first->denominator,
+            $second->numerator,
+            $second->denominator
+        );
+
+        $value = sprintf("%s/%s", $numerator, $denominator);
+        return new self($value);
+    }
+
+    /**
+     * Simplest possible implementation of adding two rational numbers
+     */
+    private static function doRationalMultiplication(
+        $numerator_x,
+        $denominator_x,
+        $numerator_y,
+        $denominator_y
+    ) {
+        $numerator = $numerator_x * $numerator_y;
+        $denominator = $denominator_x * $denominator_y;
+        return array($numerator, $denominator);
+    }
+
+    /**
+     * @param self $first
+     * @param self $second
+     * @return self
+     * @throws \InvalidArgumentException
+     */
+    public static function divide($first, $second)
+    {
+        if ($second->isZero())
+            throw new \InvalidArgumentException("Division by zero: {$first} by {$second}!");
+
+        // NOTE that second fraction parts are reversed!
+        list($numerator, $denominator) = self::doRationalMultiplication(
+            $first->numerator,
+            $first->denominator,
+            $second->denominator,
+            $second->numerator
+        );
+
+        $value = self::makePrintedRepresentation($numerator, $denominator);
+        return new self($value);
     }
 
     /**
@@ -140,19 +128,42 @@ class Fraction
      */
     public static function add($first, $second)
     {
-        list($numerator, $denominator) = self::addFractions(
+        list($numerator, $denominator) = self::doFractionAddition(
             $first->numerator,
             $first->denominator,
             $second->numerator,
             $second->denominator
         );
-        $value = sprintf("%s/%s", $numerator, $denominator);
+        $value = self::makePrintedRepresentation($numerator, $denominator);
         return new self($value);
     }
 
-    public function __toString()
+    public static function subtract($first, $second)
     {
-        return $this->string;
+        // NOTE that second fraction parts are reversed!
+        list($numerator, $denominator) = self::doFractionAddition(
+            $first->numerator,
+            $first->denominator,
+            $second->numerator * (-1),
+            $second->denominator
+        );
+
+        $value = self::makePrintedRepresentation($numerator, $denominator);
+        return new self($value);
+    }
+
+    /**
+     * Simplest possible implementation of adding two rational numbers
+     */
+    private static function doFractionAddition(
+        $numerator_x,
+        $denominator_x,
+        $numerator_y,
+        $denominator_y
+    ) {
+        $numerator = $numerator_x * $denominator_y + $numerator_y * $denominator_x;
+        $denominator = $denominator_x * $denominator_y;
+        return array($numerator, $denominator);
     }
 
     private function extractFractionParts($value)
@@ -162,57 +173,6 @@ class Fraction
         $this->checkFractionParts($numerator, $denominator);
 
         list($numerator, $denominator) = $this->simplifyFractionParts($numerator, $denominator);
-
-        return array($numerator, $denominator);
-    }
-
-    private function gcdBetween($a, $b)
-    {
-        while ($b != 0)
-        {
-            $m = $a % $b;
-            $a = $b;
-            $b = $m;
-        }
-        return $a;
-    }
-
-    private function renewPrintedRepresentation()
-    {
-        $this->string = $this->makePrintedRepresentation();
-    }
-
-    /**
-     * @return string
-     */
-    private function makePrintedRepresentation()
-    {
-        if ($this->numerator == 0) {
-            return "0";
-        } else if ($this->numerator == $this->denominator) {
-            return "1";
-        } else if ($this->denominator == 1) {
-            return (string)$this->numerator;
-        } else {
-            return sprintf("%s/%s", $this->numerator, $this->denominator);
-        }
-    }
-
-    /**
-     * @param $numerator
-     * @param $denominator
-     * @return array
-     */
-    private function simplifyFractionParts($numerator, $denominator)
-    {
-        $gcd = $this->gcdBetween($numerator, $denominator);
-        $numerator /= $gcd;
-        $denominator /= $gcd;
-
-        if ($denominator < 0) {
-            $numerator *= (-1);
-            $denominator *= (-1);
-        }
 
         return array($numerator, $denominator);
     }
@@ -250,8 +210,63 @@ class Fraction
             throw new \InvalidArgumentException("Denominator cannot be zero: we are working with plain old algebra here");
     }
 
-    private function isZero()
+    /**
+     * @param $numerator
+     * @param $denominator
+     * @return array
+     */
+    private function simplifyFractionParts($numerator, $denominator)
     {
-        return $this->numerator == 0;
+        $gcd = $this->gcdBetween($numerator, $denominator);
+        $numerator /= $gcd;
+        $denominator /= $gcd;
+
+        if ($denominator < 0) {
+            $numerator *= (-1);
+            $denominator *= (-1);
+        }
+
+        return array($numerator, $denominator);
+    }
+
+    /**
+     * Calculate the Greatest Common Divisor between two numbers.
+     *
+     * @param $a
+     * @param $b
+     * @return mixed
+     */
+    private function gcdBetween($a, $b)
+    {
+        while ($b != 0)
+        {
+            $m = $a % $b;
+            $a = $b;
+            $b = $m;
+        }
+        return $a;
+    }
+
+    private function renewPrintedRepresentation()
+    {
+        $this->string = self::makePrintedRepresentation($this->numerator, $this->denominator);
+    }
+
+    /**
+     * @param int $numerator
+     * @param int $denominator
+     * @return string
+     */
+    private static function makePrintedRepresentation($numerator, $denominator)
+    {
+        if ($numerator == 0) {
+            return "0";
+        } else if ($numerator == $denominator) {
+            return "1";
+        } else if ($denominator == 1) {
+            return (string)$numerator;
+        } else {
+            return sprintf("%s/%s", $numerator, $denominator);
+        }
     }
 }
