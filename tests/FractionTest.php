@@ -135,11 +135,7 @@ class FractionTest extends PHPUnit_Framework_TestCase
      */
     public function CanAddFractions($first_value, $second_value, $expected_result)
     {
-        $first = new Fraction($first_value);
-        $second = new Fraction($second_value);
-        $result = Fraction::add($first, $second);
-
-        $this->assertEquals($expected_result, (string)$result);
+        $this->checkBinaryOperation('add', $first_value, $second_value, $expected_result);
     }
 
     public function FractionsMultiplication()
@@ -163,11 +159,7 @@ class FractionTest extends PHPUnit_Framework_TestCase
      */
     public function CanMultiplyFractions($first_value, $second_value, $expected_result)
     {
-        $first = new Fraction($first_value);
-        $second = new Fraction($second_value);
-        $result = Fraction::mult($first, $second);
-
-        $this->assertEquals($expected_result, (string)$result);
+        $this->checkBinaryOperation('mult', $first_value, $second_value, $expected_result);
     }
 
     public function FractionsDivision()
@@ -190,11 +182,7 @@ class FractionTest extends PHPUnit_Framework_TestCase
      */
     public function CanDivideFractions($first_value, $second_value, $expected_result)
     {
-        $first = new Fraction($first_value);
-        $second = new Fraction($second_value);
-        $result = Fraction::divide($first, $second);
-
-        $this->assertEquals($expected_result, (string)$result);
+        $this->checkBinaryOperation('divide', $first_value, $second_value, $expected_result);
     }
 
     public function DivisionByZero()
@@ -210,13 +198,10 @@ class FractionTest extends PHPUnit_Framework_TestCase
      * @dataProvider DivisionByZero
      * @expectedException \InvalidArgumentException
      */
-    public function ThrowsExceptionOnDivisionByZeroFraction($divisor)
+    public function ThrowsExceptionOnDivisionByZeroFraction($zero_valued_divisor)
     {
         $arbitrary_fraction = '1/2';
-        $first = new Fraction($arbitrary_fraction);
-        $second = new Fraction($divisor);
-
-        Fraction::divide($first, $second);
+        $this->checkBinaryOperation('divide', $arbitrary_fraction, $zero_valued_divisor, null);
     }
 
     public function SubtractFractions()
@@ -235,12 +220,18 @@ class FractionTest extends PHPUnit_Framework_TestCase
      */
     public function CanSubtractFractions($first_value, $second_value, $expected_result)
     {
-        $first = new Fraction($first_value);
-        $second = new Fraction($second_value);
-        $result = Fraction::subtract($first, $second);
+        $this->checkBinaryOperation('subtract', $first_value, $second_value, $expected_result);
+    }
+
+    private function checkBinaryOperation($operation, $first_operand, $second_operand, $expected_result)
+    {
+        $first = new Fraction($first_operand);
+        $second = new Fraction($second_operand);
+        $result = call_user_func(array('\Hijarian\Fraction\Fraction', $operation), $first, $second);
 
         $this->assertEquals($expected_result, (string)$result);
     }
+
 
 //-BINARY OPERATIONS-END----------------------------------------------------------------------
 
