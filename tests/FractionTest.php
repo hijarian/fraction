@@ -156,4 +156,24 @@ class FractionTest extends PHPUnit_Framework_TestCase
 
         Fraction::divide($first, $second);
     }
+
+    public function NegativeFractions()
+    {
+        return array(
+            array('-1/2', '-1/2'),
+            array('-1/-2', '1/2'),
+            array('1/-2', '-1/2')
+        );
+    }
+
+    /**
+     * @test
+     * @dataProvider NegativeFractions
+     */
+    public function CanCreateNegativeFractions($input, $expected)
+    {
+        $fraction = new Fraction($input);
+
+        $this->assertEquals($expected, (string)$fraction);
+    }
 }

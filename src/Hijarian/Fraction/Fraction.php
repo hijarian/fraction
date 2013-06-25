@@ -194,6 +194,12 @@ class Fraction
         $gcd = $this->gcdBetween($numerator, $denominator);
         $numerator /= $gcd;
         $denominator /= $gcd;
+
+        if ($denominator < 0) {
+            $numerator *= (-1);
+            $denominator *= (-1);
+        }
+
         return array($numerator, $denominator);
     }
 
