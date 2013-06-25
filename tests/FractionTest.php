@@ -80,4 +80,32 @@ class FractionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected_result, (string)$result);
     }
 
+    public function FractionsMultiplication()
+    {
+        return array(
+            array('1/2', '1/3', '1/6'),
+            array('2/5', '3/2', '3/5'),
+            array('5/5', '3/2', '3/2'),
+            array('4/3', '3/4', '1'),
+            array('3/4', '4/3', '1'),
+            array('0', '1', '0'),
+            array('1', '0', '0'),
+            array('4/3', '1', '4/3'),
+            array('1', '4/3', '4/3'),
+        );
+    }
+
+    /**
+     * @test
+     * @dataProvider FractionsMultiplication
+     */
+    public function CanMultiplyFractions($first_value, $second_value, $expected_result)
+    {
+        $first = new Fraction($first_value);
+        $second = new Fraction($second_value);
+        $result = Fraction::mult($first, $second);
+
+        $this->assertEquals($expected_result, (string)$result);
+    }
+
 }

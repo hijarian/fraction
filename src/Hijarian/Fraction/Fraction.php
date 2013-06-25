@@ -33,6 +33,33 @@ class Fraction
     }
 
     /**
+     * Simplest possible implementation of adding two rational numbers
+     */
+    private static function multiplyFractions(
+        $numerator_x,
+        $denominator_x,
+        $numerator_y,
+        $denominator_y
+    ) {
+        $numerator = $numerator_x * $numerator_y;
+        $denominator = $denominator_x * $denominator_y;
+        return array($numerator, $denominator);
+    }
+
+    public static function mult($first, $second)
+    {
+        list($numerator, $denominator) = self::multiplyFractions(
+            $first->numerator,
+            $first->denominator,
+            $second->numerator,
+            $second->denominator
+        );
+
+        $value = sprintf("%s/%s", $numerator, $denominator);
+        return new self($value);
+    }
+
+    /**
      * Common magic getter, returning value of any requested property,
      * given it was defined on this class.
      *
@@ -83,7 +110,7 @@ class Fraction
             $second->denominator
         );
         $value = sprintf("%s/%s", $numerator, $denominator);
-        return new Fraction($value);
+        return new self($value);
     }
 
     public function __toString()
@@ -171,10 +198,10 @@ class Fraction
     private function checkFractionParts($numerator, $denominator)
     {
         if (!is_numeric($numerator))
-            throw new \InvalidArgumentException("Numerator '{$numerator} is not a number!");
+            throw new \InvalidArgumentException("Numerator '{$numerator}' is not a number!");
 
         if (!is_numeric($denominator))
-            throw new \InvalidArgumentException("Denominator '{$denominator} is not a number!");
+            throw new \InvalidArgumentException("Denominator '{$denominator}' is not a number!");
 
     }
 }
