@@ -246,6 +246,8 @@ class Fraction
         if (!is_numeric($denominator))
             throw new \InvalidArgumentException("Denominator '{$denominator}' is not a number!");
 
+        if ($denominator == 0)
+            throw new \InvalidArgumentException("Denominator cannot be zero: we are working with plain old algebra here");
     }
 
     private function isZero()

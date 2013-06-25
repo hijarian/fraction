@@ -107,6 +107,19 @@ class FractionInstantiationTest extends PHPUnit_Framework_TestCase
         $this->checkCreation($input, $expected);
     }
 
+    /**
+     * @test
+     * @expectedException InvalidArgumentException
+     */
+    public function ThrowsExceptionWhenDenominatorIsZero()
+    {
+        new Fraction('1/0');
+    }
+
+    /**
+     * @param string $input Textual representation of the Fraction object to be created
+     * @param string $expected Expected textual representation of Fraction object which will be created (it can change due to fraction simplification)
+     */
     private function checkCreation($input, $expected)
     {
         $fraction = new Fraction($input);
