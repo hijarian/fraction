@@ -6,17 +6,6 @@ use \Hijarian\Fraction\Fraction;
 
 class FractionTest extends PHPUnit_Framework_TestCase
 {
-
-    /** @test */
-    public function CanAddFractions()
-    {
-        $first = new Fraction("2/5");
-        $second = new Fraction("1/5");
-        $result = Fraction::add($first, $second);
-
-        $this->assertEquals("3/5", $result->string);
-    }
-
     public function SimplifyingFractions()
     {
        return array(
@@ -38,4 +27,35 @@ class FractionTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, (string)$fraction);
     }
+
+    public function InvalidInputs()
+    {
+        return array(
+            array('abcde'),
+            array('abcde/deadbeef'),
+            array('1/xxx'),
+            array('xxx/123'),
+        );
+    }
+
+    /**
+     * @test
+     * @dataProvider InvalidInputs
+     * @expectedException \InvalidArgumentException
+     */
+    public function ThrowsExceptionWhenNonNumericInput($input)
+    {
+        new Fraction($input);
+    }
+
+    /** @test */
+    public function CanAddFractions()
+    {
+        $first = new Fraction("2/5");
+        $second = new Fraction("1/5");
+        $result = Fraction::add($first, $second);
+
+        $this->assertEquals("3/5", $result->string);
+    }
+
 }

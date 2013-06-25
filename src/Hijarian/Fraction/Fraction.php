@@ -74,6 +74,8 @@ class Fraction
     {
         list($numerator, $denominator) = $this->getBaseFractionParts($value);
 
+        $this->checkFractionParts($numerator, $denominator);
+
         list($numerator, $denominator) = $this->simplifyFractionParts($numerator, $denominator);
 
         return array($numerator, $denominator);
@@ -135,15 +137,23 @@ class Fraction
         if (empty($parts)) {
             $numerator = 0;
             $denominator = 1;
-            return array($numerator, $denominator);
         } else if (count($parts) < 2) {
             $numerator = $parts[0];
             $denominator = 1;
-            return array($numerator, $denominator);
         } else {
             $numerator = $parts[0];
             $denominator = $parts[1];
-            return array($numerator, $denominator);
         }
+        return array($numerator, $denominator);
+    }
+
+    private function checkFractionParts($numerator, $denominator)
+    {
+        if (!is_numeric($numerator))
+            throw new \InvalidArgumentException("Numerator '{$numerator} is not a number!");
+
+        if (!is_numeric($denominator))
+            throw new \InvalidArgumentException("Denominator '{$denominator} is not a number!");
+
     }
 }
