@@ -108,4 +108,52 @@ class FractionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected_result, (string)$result);
     }
 
+    public function FractionsDivision()
+    {
+        return array(
+            array('1/2', '1/3', '3/2'),
+            array('2/5', '3/2', '4/15'),
+            array('5/5', '3/2', '2/3'),
+            array('4/3', '3/4', '16/9'),
+            array('3/4', '4/3', '9/16'),
+            array('0', '1', '0'),
+            array('4/3', '1', '4/3'),
+            array('1', '4/3', '3/4'),
+        );
+    }
+
+    /**
+     * @test
+     * @dataProvider FractionsDivision
+     */
+    public function CanDivideFractions($first_value, $second_value, $expected_result)
+    {
+        $first = new Fraction($first_value);
+        $second = new Fraction($second_value);
+        $result = Fraction::divide($first, $second);
+
+        $this->assertEquals($expected_result, (string)$result);
+    }
+
+    public function DivisionByZero()
+    {
+        return array(
+            array('0'),
+            array('0/10'),
+        );
+    }
+
+    /**
+     * @test
+     * @dataProvider DivisionByZero
+     * @expectedException \InvalidArgumentException
+     */
+    public function ThrowsExceptionOnDivisionByZeroFraction($divisor)
+    {
+        $arbitrary_fraction = '1/2';
+        $first = new Fraction($arbitrary_fraction);
+        $second = new Fraction($divisor);
+
+        Fraction::divide($first, $second);
+    }
 }

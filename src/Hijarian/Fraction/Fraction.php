@@ -60,6 +60,29 @@ class Fraction
     }
 
     /**
+     * @param self $first
+     * @param self $second
+     * @return self
+     * @throws \InvalidArgumentException
+     */
+    public static function divide($first, $second)
+    {
+        if ($second->isZero())
+            throw new \InvalidArgumentException("Division by zero: {$first} by {$second}!");
+
+        // NOTE that second fraction parts are reversed!
+        list($numerator, $denominator) = self::multiplyFractions(
+            $first->numerator,
+            $first->denominator,
+            $second->denominator,
+            $second->numerator
+        );
+
+        $value = sprintf("%s/%s", $numerator, $denominator);
+        return new self($value);
+    }
+
+    /**
      * Common magic getter, returning value of any requested property,
      * given it was defined on this class.
      *
@@ -203,5 +226,10 @@ class Fraction
         if (!is_numeric($denominator))
             throw new \InvalidArgumentException("Denominator '{$denominator}' is not a number!");
 
+    }
+
+    private function isZero()
+    {
+        return $this->numerator == 0;
     }
 }
