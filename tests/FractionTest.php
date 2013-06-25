@@ -6,18 +6,31 @@ use \Hijarian\Fraction\Fraction;
 
 class FractionTest extends PHPUnit_Framework_TestCase
 {
-    public function SimplifyingFractions()
+//-INSTANTIATING TESTS-BEGIN----------------------------------------------------------------------
+    public function NormalImproperFractions()
     {
         return array(
             array('3/5', '3/5'),
-            array('4/8', '1/2'),
-            array('0/1', '0'),
-            array('12/12', '1'),
-            array('8/2', '4'),
-            array('30/10', '3'),
-            array('3/6', '1/2'),
             array('2/3', '2/3'),
-            array('1', '1')
+            array('27/8', '27/8'),
+            array('11/9', '11/9'),
+        );
+    }
+
+    /**
+     * @test
+     * @dataProvider NormalImproperFractions()
+     */
+    public function CanCreateNormalImproperFractions($input, $expected)
+    {
+        $this->checkCreation($input, $expected);
+    }
+
+    public function SimplifyingFractions()
+    {
+        return array(
+            array('4/8', '1/2'),
+            array('3/6', '1/2'),
         );
     }
 
@@ -25,11 +38,31 @@ class FractionTest extends PHPUnit_Framework_TestCase
      * @test
      * @dataProvider SimplifyingFractions
      */
-    public function SimplifiesFractionsOnInstantiating($given, $expected)
+    public function SimplifiesFractionsOnInstantiating($input, $expected)
     {
-        $fraction = new Fraction($given);
+        $this->checkCreation($input, $expected);
+    }
 
-        $this->assertEquals($expected, (string)$fraction);
+    public function SimplifyingToWholeNumbers()
+    {
+        return array(
+            array('0', '0'),
+            array('0/1', '0'),
+            array('1', '1'),
+            array('27/1', '27'),
+            array('12/12', '1'),
+            array('8/2', '4'),
+            array('30/10', '3'),
+        );
+    }
+
+    /**
+     * @test
+     * @dataProvider SimplifyingFractions
+     */
+    public function WhenFractionSimplifiesToWholeNumberItBecomesThatNumber($input, $expected)
+    {
+        $this->checkCreation($input, $expected);
     }
 
     public function InvalidInputs()
@@ -52,6 +85,35 @@ class FractionTest extends PHPUnit_Framework_TestCase
         new Fraction($input);
     }
 
+    public function NegativeFractions()
+    {
+        return array(
+            array('-1/2', '-1/2'),
+            array('-1/-2', '1/2'),
+            array('1/-2', '-1/2'),
+            array('-4/8', '-1/2'),
+            array('38/-2', '-19'),
+            array('-25/15', '-5/3')
+        );
+    }
+
+    /**
+     * @test
+     * @dataProvider NegativeFractions
+     */
+    public function CanCreateNegativeFractions($input, $expected)
+    {
+        $this->checkCreation($input, $expected);
+    }
+
+    private function checkCreation($input, $expected)
+    {
+        $fraction = new Fraction($input);
+        $this->assertEquals($expected, (string)$fraction);
+    }
+//-INSTANTIATING TESTS-END----------------------------------------------------------------------
+
+//-BINARY OPERATIONS-BEGIN----------------------------------------------------------------------
     public function FractionsAddition()
     {
         return array(
@@ -157,26 +219,6 @@ class FractionTest extends PHPUnit_Framework_TestCase
         Fraction::divide($first, $second);
     }
 
-    public function NegativeFractions()
-    {
-        return array(
-            array('-1/2', '-1/2'),
-            array('-1/-2', '1/2'),
-            array('1/-2', '-1/2')
-        );
-    }
-
-    /**
-     * @test
-     * @dataProvider NegativeFractions
-     */
-    public function CanCreateNegativeFractions($input, $expected)
-    {
-        $fraction = new Fraction($input);
-
-        $this->assertEquals($expected, (string)$fraction);
-    }
-
     public function SubtractFractions()
     {
         return array(
@@ -199,4 +241,7 @@ class FractionTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected_result, (string)$result);
     }
+
+//-BINARY OPERATIONS-END----------------------------------------------------------------------
+
 }
