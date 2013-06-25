@@ -82,6 +82,20 @@ class Fraction
         return new self($value);
     }
 
+    public static function subtract($first, $second)
+    {
+        // NOTE that second fraction parts are reversed!
+        list($numerator, $denominator) = self::addFractions(
+            $first->numerator,
+            $first->denominator,
+            $second->numerator * (-1),
+            $second->denominator
+        );
+
+        $value = sprintf("%s/%s", $numerator, $denominator);
+        return new self($value);
+    }
+
     /**
      * Common magic getter, returning value of any requested property,
      * given it was defined on this class.

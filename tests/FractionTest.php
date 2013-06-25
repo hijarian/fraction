@@ -176,4 +176,27 @@ class FractionTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, (string)$fraction);
     }
+
+    public function SubtractFractions()
+    {
+        return array(
+            array('1/2', '1/2', '0'),
+            array('1', '2', '-1'),
+            array('3/2', '1/2', '1'),
+            array('-3/4', '1/4', '-1')
+        );
+    }
+
+    /**
+     * @test
+     * @dataProvider SubtractFractions()
+     */
+    public function CanSubtractFractions($first_value, $second_value, $expected_result)
+    {
+        $first = new Fraction($first_value);
+        $second = new Fraction($second_value);
+        $result = Fraction::subtract($first, $second);
+
+        $this->assertEquals($expected_result, (string)$result);
+    }
 }
