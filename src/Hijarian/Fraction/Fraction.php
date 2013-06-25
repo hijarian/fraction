@@ -19,6 +19,20 @@ class Fraction
     private $denominator;
 
     /**
+     * Simplest possible implementation of adding two rational numbers
+     */
+    private static function addFractions(
+        $numerator_x,
+        $denominator_x,
+        $numerator_y,
+        $denominator_y
+    ) {
+        $numerator = $numerator_x * $denominator_y + $numerator_y * $denominator_x;
+        $denominator = $denominator_x * $denominator_y;
+        return array($numerator, $denominator);
+    }
+
+    /**
      * Common magic getter, returning value of any requested property,
      * given it was defined on this class.
      *
@@ -62,7 +76,14 @@ class Fraction
      */
     public static function add($first, $second)
     {
-        return new Fraction("3/5");
+        list($numerator, $denominator) = self::addFractions(
+            $first->numerator,
+            $first->denominator,
+            $second->numerator,
+            $second->denominator
+        );
+        $value = sprintf("%s/%s", $numerator, $denominator);
+        return new Fraction($value);
     }
 
     public function __toString()
