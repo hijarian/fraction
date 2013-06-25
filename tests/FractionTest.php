@@ -17,11 +17,25 @@ class FractionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("3/5", $result->string);
     }
 
-    /** @test */
-    public function CanGetStringValueOfFraction()
+    public function SimplifyingFractions()
     {
-        $fraction = new Fraction("2/5");
+       return array(
+            array('3/5', '3/5'),
+            array('4/8', '1/2'),
+            array('0/1', '0'),
+            array('12/12', '1'),
+            array('8/2', '4'),
+        );
+    }
 
-        $this->assertEquals("2/5", $fraction->string);
+    /**
+     * @test
+     * @dataProvider SimplifyingFractions
+     */
+    public function SimplifiesFractionsOnInstantiating($given, $expected)
+    {
+        $fraction = new Fraction($given);
+
+        $this->assertEquals($expected, (string)$fraction);
     }
 }

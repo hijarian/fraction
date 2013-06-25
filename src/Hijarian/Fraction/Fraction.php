@@ -12,6 +12,12 @@ class Fraction
     /** @var string */
     private $string;
 
+    /** @var integer */
+    private $numerator;
+
+    /** @var integer */
+    private $denominator;
+
     /**
      * Common magic getter, returning value of any requested property,
      * given it was defined on this class.
@@ -39,7 +45,12 @@ class Fraction
      */
     public function __construct($value)
     {
-        $this->string = $value;
+        list($numerator, $denominator) = $this->extractFractionParts($value);
+
+        $this->numerator = $numerator;
+        $this->denominator = $denominator;
+
+        $this->renewPrintedRepresentation();
     }
 
     /**
@@ -52,5 +63,87 @@ class Fraction
     public static function add($first, $second)
     {
         return new Fraction("3/5");
+    }
+
+    public function __toString()
+    {
+        return $this->string;
+    }
+
+    private function extractFractionParts($value)
+    {
+        list($numerator, $denominator) = $this->getBaseFractionParts($value);
+
+        list($numerator, $denominator) = $this->simplifyFractionParts($numerator, $denominator);
+
+        return array($numerator, $denominator);
+    }
+
+    private function gcdBetween($a, $b)
+    {
+        while ($b != 0)
+        {
+            $m = $a % $b;
+            $a = $b;
+            $b = $m;
+        }
+        return $a;
+    }
+
+    private function renewPrintedRepresentation()
+    {
+        $this->string = $this->makePrintedRepresentation();
+    }
+
+    /**
+     * @return string
+     */
+    private function makePrintedRepresentation()
+    {
+        if ($this->numerator == 0) {
+            return "0";
+        } else if ($this->numerator == $this->denominator) {
+            return "1";
+        } else if ($this->denominator == 1) {
+            return (string)$this->numerator;
+        } else {
+            return sprintf("%s/%s", $this->numerator, $this->denominator);
+        }
+    }
+
+    /**
+     * @param $numerator
+     * @param $denominator
+     * @return array
+     */
+    private function simplifyFractionParts($numerator, $denominator)
+    {
+        $gcd = $this->gcdBetween($numerator, $denominator);
+        $numerator /= $gcd;
+        $denominator /= $gcd;
+        return array($numerator, $denominator);
+    }
+
+    /**
+     * @param $value
+     * @return array
+     */
+    private function getBaseFractionParts($value)
+    {
+        $parts = explode("/", $value);
+
+        if (empty($parts)) {
+            $numerator = 0;
+            $denominator = 1;
+            return array($numerator, $denominator);
+        } else if (count($parts) < 2) {
+            $numerator = $parts[0];
+            $denominator = 1;
+            return array($numerator, $denominator);
+        } else {
+            $numerator = $parts[0];
+            $denominator = $parts[1];
+            return array($numerator, $denominator);
+        }
     }
 }
