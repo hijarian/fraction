@@ -6,10 +6,22 @@ use \Hijarian\Fraction\Fraction;
 
 class FractionTest extends PHPUnit_Framework_TestCase
 {
+
     /** @test */
-    public function CanRunTests()
+    public function CanAddFractions()
     {
-        $fraction = new Fraction;
-        $this->fail('I am just a failing test, checking that class autoloads correctly!');
+        $first = new Fraction("2/5");
+        $second = new Fraction("1/5");
+        $result = Fraction::add($first, $second);
+
+        $this->assertEquals("3/5", $result->string);
+    }
+
+    /** @test */
+    public function CanGetStringValueOfFraction()
+    {
+        $fraction = new Fraction("2/5");
+
+        $this->assertEquals("2/5", $fraction->string);
     }
 }
