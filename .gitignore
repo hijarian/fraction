@@ -1,2 +1,6 @@
 # No phpStorm-specific files, please.
 .idea
+
+# No Composer-installed stuff, please.
+composer.phar
+vendor/
